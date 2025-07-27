@@ -1,17 +1,15 @@
-import React, { use, useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import sideImg from '../assets/images/more/6.png'
-import { AuthContext } from '../ContextAPI/AuthContext';
- import { ToastContainer, toast } from 'react-toastify';
-import { Link } from 'react-router';
-
-
+import React, { use, useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import sideImg from "../assets/images/more/6.png";
+import { AuthContext } from "../ContextAPI/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import { Link } from "react-router";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 const SignUp = () => {
-    const {CreateUser} = use(AuthContext);
-  
-
-    const handleSignUp = (e) =>{
+  const { CreateUser, verifyEmail } = use(AuthContext);
+  const [showpassword, setShowPassword] = useState(false);
+  const handleSignUp = (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
@@ -19,37 +17,45 @@ const SignUp = () => {
     const password = form.password.value;
     const terms = form.terms.checked;
     console.log(name, email, password);
-    if(!terms){
-        alert('Please Accept out Term and Condition')
+    if (!terms) {
+      alert("Please Accept out Term and Condition");
     }
-    
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}/;
-        if (passwordRegex.test(password) === false) {
-          toast.error(
-            "Password must be at least 6 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character."
-          );
-          return
-        }
+    if (passwordRegex.test(password) === false) {
+      toast.error(
+        "Password must be at least 6 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character."
+      );
+      return;
+    }
     CreateUser(email, password)
-    .then(result => {
-        console.log(result.user);
-        toast.success('Account Created Successfully!!!')
-    }).catch(error => {
-        toast.error("Email has already used", error)
-    })
-
-
-
-}
-    return (
-       
-
+      .then((result) => {
+        const user = result.user;
+        toast.success("Account Created Successfully!!!");
+        verifyEmail(user)
+          .then((result) => {
+            toast.success(
+              "Please verify your email address to complete the registration process.",
+              result
+            );
+            form.reset();
+          })
+          .catch((error) => {
+            toast.error("Failed to send verification email", error);
+          });
+        form.reset();
+      })
+      .catch((error) => {
+        toast.error("Email has already used", error);
+      });
+  };
+  return (
     <div className="lg:min-h-screen mt-10 flex lg:items-center justify-center  text-balck p-4 lg:mt-10 lg:mx-0 md:mx-20">
       <div className="w-full max-w-5xl bg-[#edebe4] rounded-3xl overflow-hidden shadow-lg flex flex-col lg:flex-row ">
         {/* Left Side Image */}
         <div className="lg:w-1/2 bg-[#382828] hidden lg:block">
           <img
-            src={sideImg}// You can replace this
+            src={sideImg} // You can replace this
             alt="Signup illustration"
             className="object-cover w-full h-full"
           />
@@ -57,27 +63,73 @@ const SignUp = () => {
 
         {/* Right Side Form */}
         <div className="lg:w-1/2 p-10 lg:mt-34">
-          <h2 className="text-4xl  font-bold mb-2 rancho">Create an account</h2>
+          <h2 className="text-4xl  font-bold mb-2 rancho">Create an Account</h2>
           <p className="text-sm mb-6 text-black raleway">
-            Already have an account? <Link to={'/signIn'} className="text-blue-500 hover:underline">Log in</Link>
+            Already have an account?{" "}
+            <Link to={"/signIn"} className="text-blue-500 hover:underline">
+              Log in
+            </Link>
           </p>
 
           <form onSubmit={handleSignUp} className="space-y-4">
             <div className="flex gap-4">
-              <input type="text" placeholder="Name" name='name' className="input w-full bg-white text-black placeholder-gray-400 p-3 rounded-md border-none raleway" />
-              
+              <input
+                type="text"
+                placeholder="Name"
+                name="name"
+                required
+                className="input w-full bg-white text-black placeholder-gray-400 p-3 rounded-md border-none raleway"
+              />
             </div>
 
-            <input type="email" placeholder="Email" name='email' className="raleway input w-full bg-white text-black border-none placeholder-gray-400 p-3 rounded-md" />
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              required
+              className="raleway input w-full bg-white text-black border-none placeholder-gray-400 p-3 rounded-md"
+            />
 
-            <input type="password" name='password' placeholder="Enter your password" className="input w-full bg-white border-none text-black placeholder-gray-400 p-3 rounded-md raleway" />
+            <div className="relative">
+              <input
+                type={showpassword ? "text" : "password"}
+                name="password"
+                placeholder="Enter your password"
+                required
+                className="input w-full bg-white border-none text-black placeholder-gray-400 p-3 rounded-md raleway"
+              />
+              <button
+                className="absolute top-3 right-6"
+                type="button"
+                onClick={() => setShowPassword(!showpassword)}
+              >
+                {showpassword ? (
+                  <IoEyeOffOutline className="text-black" />
+                ) : (
+                  <IoEyeOutline className="text-black" />
+                )}
+              </button>
+            </div>
 
             <label className="inline-flex items-center mt-2">
-              <input type="checkbox" name='terms' className="form-checkbox text-purple-500" />
-              <span className="ml-2 text-sm text-black">I agree to the <a href="#" className="text-blue-500 hover:underline">terms & conditions</a></span>
+              <input
+                type="checkbox"
+                name="terms"
+                className="form-checkbox text-purple-500"
+              />
+              <span className="ml-2 text-sm text-black">
+                I agree to the{" "}
+                <a href="#" className="text-blue-500 hover:underline">
+                  terms & conditions
+                </a>
+              </span>
             </label>
 
-            <input type="submit" value="Create Account" className="w-full bg-[#382828] hover:bg-[#382828] text-white font-semibold py-3 rounded-md mt-4 cursor-pointer raleway" />
+            <input
+              type="submit"
+              value="Create Account"
+              className="w-full bg-[#382828] hover:bg-[#382828] text-white font-semibold py-3 rounded-md mt-4 cursor-pointer rancho"
+            />
             <ToastContainer />
           </form>
 
@@ -95,8 +147,5 @@ const SignUp = () => {
     </div>
   );
 };
-
-
-
 
 export default SignUp;
