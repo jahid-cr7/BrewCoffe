@@ -11,19 +11,21 @@ const UpdateCoffee = () => {
         const formdata = new FormData(form)
         const coffeeInputData = Object.fromEntries(formdata.entries());
         console.log(coffeeInputData);
-        fetch(`http://localhost:3000/update/${coffeeData._id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(coffeeInputData)
-        }).then(res => res.json()).then(data => {
-            console.log(data);
-            if(data.modifiedCount){
-                alert('Coffee Updated Successfully');
-                form.reset();
-            }
+        fetch(`https://brew-coffee-two.vercel.app/update/${coffeeData._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(coffeeInputData),
         })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.modifiedCount) {
+              alert("Coffee Updated Successfully");
+              form.reset();
+            }
+          });
       
     }
     return (

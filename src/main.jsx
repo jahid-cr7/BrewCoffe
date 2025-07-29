@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        loader: () => fetch("http://localhost:3000/coffee"),
+        loader: () => fetch("https://brew-coffee-two.vercel.app/coffee"),
       },
       {
         path: "AddCoffee",
@@ -54,7 +54,8 @@ const router = createBrowserRouter([
             <CoffeeShow />
           </PrivateAuth>
         ),
-        loader: ({ params }) => fetch(`http://localhost:3000/${params._id}`),
+        loader: ({ params }) =>
+          fetch(`https://brew-coffee-two.vercel.app/${params._id}`),
       },
       {
         path: "coffee/:id",
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
           </PrivateAuth>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:3000/coffee/${params.id}`),
+          fetch(`https://brew-coffee-two.vercel.app/coffee/${params.id}`),
       },
       {
         path: "update/:id",
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
           </PrivateAuth>
         ),
         loader: ({ params }) =>
-          fetch(`http://localhost:3000/coffee/${params.id}`),
+          fetch(`https://brew-coffee-two.vercel.app/coffee/${params.id}`),
       },
       {
         path: "/signUp",
@@ -87,7 +88,7 @@ const router = createBrowserRouter([
       {
         path: "/users",
         Component: Users,
-        loader: () => fetch("http://localhost:3000/users"),
+        loader: () => fetch("https://brew-coffee-two.vercel.app/users"),
       },
     ],
   },

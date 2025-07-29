@@ -15,19 +15,21 @@ const AddCoffee = () => {
         const price = event.target.price.value;
         const coffee ={name, supplier, category, photoURL, chef, taste, details, price};
         console.log(coffee);
-        fetch('http://localhost:3000/addcoffee', {
-            method: "POST",
-            headers: {
-                "Content-Type": 'application/json',
-            },
-            body: JSON.stringify(coffee),
-        }).then(res => res.json()).then((data) => {
-            console.log(data);
-            if(data.insertedId){
-                alert('Coffee Added Successfully');
-                event.target.reset();
-            }
+        fetch("https://brew-coffee-two.vercel.app/addcoffee", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(coffee),
         })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.insertedId) {
+              alert("Coffee Added Successfully");
+              event.target.reset();
+            }
+          });
     }
 
 

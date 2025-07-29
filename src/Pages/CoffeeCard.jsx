@@ -20,7 +20,7 @@ const CoffeeCard = ({ coffeeItem}) => {
     }).then((result) => {
       console.log(result.isConfirmed);
       if (result.isConfirmed) {
-        fetch(`http://localhost:3000/coffee/${_id}`, {
+        fetch(`https://brew-coffee-two.vercel.app/coffee/${_id}`, {
           method: "DELETE",
           headers: {},
         })
@@ -32,8 +32,6 @@ const CoffeeCard = ({ coffeeItem}) => {
                 text: "Your Coffee has been deleted.",
                 icon: "success",
               });
-             
-              
             }
           });
       }

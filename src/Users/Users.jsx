@@ -16,14 +16,14 @@ const Users = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:3000/users/${id}`, {
+        fetch(`https://brew-coffee-two.vercel.app/users/${id}`, {
           method: "DELETE",
         })
           .then((res) => res.json())
           .then((data) => {
             if (data.deletedCount) {
-                const remainingUsers = users.filter(user => user._id!== id);
-                setUsers(remainingUsers);
+              const remainingUsers = users.filter((user) => user._id !== id);
+              setUsers(remainingUsers);
               Swal.fire({
                 title: "Deleted!",
                 text: "Your file has been deleted.",
