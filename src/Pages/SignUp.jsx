@@ -12,11 +12,17 @@ const SignUp = () => {
   const handleSignUp = (e) => {
     e.preventDefault();
     const form = e.target;
-    const name = form.name.value;
-    const email = form.email.value;
-    const password = form.password.value;
+    // const name = form.name.value;
+    // const email = form.email.value;
+    // const password = form.password.value;
+    const formData = new FormData(form);
+    const { email, password, ...userProfile } = Object.fromEntries(
+      formData.entries()
+    );
+
+    console.log(email, password);
     const terms = form.terms.checked;
-    console.log(name, email, password);
+
     if (!terms) {
       alert("Please Accept out Term and Condition");
     }
@@ -28,26 +34,45 @@ const SignUp = () => {
       );
       return;
     }
-    CreateUser(email, password)
-      .then((result) => {
-        const user = result.user;
-        toast.success("Account Created Successfully!!!");
-        verifyEmail(user)
-          .then((result) => {
-            toast.success(
-              "Please verify your email address to complete the registration process.",
-              result
-            );
-            form.reset();
-          })
-          .catch((error) => {
-            toast.error("Failed to send verification email", error);
-          });
-        form.reset();
+    CreateUser(email, password).then((result) => {
+      const user = result.user;
+      console.log(user);
+      const rest = {
+        email,
+        ...userProfile,
+        creationTime: result.user.metadata.creationTime,
+        lastSignInTime: result.user.metadata.lastSignInTime,
+      };
+      fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(rest),
       })
-      .catch((error) => {
-        toast.error("Email has already used", error);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.insertedId) {
+            toast.success("Account Created Successfully!!!", data);
+          }
+          verifyEmail(user)
+            .then((result) => {
+              toast.success(
+                "Please verify your email address to complete the registration process.",
+                result
+              );
+              form.reset();
+            })
+            .catch((error) => {
+              toast.error("Failed to send verification email", error);
+            });
+        })
+        .catch((error) => {
+          toast.error("Email has already used", error);
+        });
+      form.reset();
+    });
   };
   return (
     <div className="lg:min-h-screen mt-10 flex lg:items-center justify-center  text-balck p-4 lg:mt-10 lg:mx-0 md:mx-20">
@@ -81,7 +106,13 @@ const SignUp = () => {
                 className="input w-full bg-white text-black placeholder-gray-400 p-3 rounded-md border-none raleway"
               />
             </div>
-
+            <input
+              type="text"
+              placeholder="Photo URL"
+              name="photoURL"
+              required
+              className="raleway input w-full bg-white text-black border-none placeholder-gray-400 p-3 rounded-md"
+            />
             <input
               type="email"
               placeholder="Email"

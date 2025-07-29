@@ -7,7 +7,7 @@ import { auth } from "../Firebase/Firebase.config";
 import { ToastContainer, toast } from "react-toastify";
 const Header = () => {
   const { users, Logout } = use(AuthContext);
-  console.log(users);
+  
   const logoutUser = () => {
     Logout(auth)
       .then(() => {
@@ -30,22 +30,22 @@ const Header = () => {
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            // xmlns="http://www.w3.org/2000/svg"
+            // className="h-5 w-5 text-white"
+            // fill="none"
+            // viewBox="0 0 24 24"
+            // stroke="currentColor"
             >
               {" "}
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h7"
+              // strokeLinecap="round"
+              // strokeLinejoin="round"
+              // strokeWidth="2"
+              // d="M4 6h16M4 12h16M4 18h7"
               />{" "}
             </svg>
           </div>
-          <ul
+          {/* <ul
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
@@ -58,7 +58,7 @@ const Header = () => {
             <li>
               <a>About</a>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </div>
       <div className="navbar-center">
@@ -81,7 +81,7 @@ const Header = () => {
 
           <ul
             tabIndex={0}
-            className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-40"
+            className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-50"
           >
             <li>
               <Link to={"/"}>Home</Link>
@@ -89,17 +89,17 @@ const Header = () => {
             <li>
               <Link to={"/"}>About</Link>
             </li>
+            <li>{users ? <p>{users.email}</p> : <p>Guest</p>}</li>
             <li>
-              <Link>
+              <>
                 {users ? (
-                  <>
-                    {" "}
+                  <div>
                     <button onClick={logoutUser}>Sign Out</button>
-                  </>
+                  </div>
                 ) : (
                   <Link to={"/signIn"}>Login</Link>
                 )}
-              </Link>
+              </>
             </li>
           </ul>
         </div>

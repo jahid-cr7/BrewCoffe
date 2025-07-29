@@ -17,6 +17,9 @@ import Footer from "./Components/Footer.jsx";
 import SignUp from "./Pages/SignUp.jsx";
 import AuthProvider from "./ContextAPI/AuthProvider.jsx";
 import SignIn from "./Pages/SignIn.jsx";
+import PrivateAuth from "./Route/PrivateAuth.jsx";
+import Users from "./Users/Users.jsx";
+
 
 const router = createBrowserRouter([
   {
@@ -30,26 +33,46 @@ const router = createBrowserRouter([
       },
       {
         path: "AddCoffee",
-        element: <AddCoffee />,
+        element: (
+          <PrivateAuth>
+            <AddCoffee />
+          </PrivateAuth>
+        ),
       },
       {
         path: "DisplayCoffee",
-        element: <DisplayCoffee />,
+        element: (
+          <PrivateAuth>
+            <DisplayCoffee />
+          </PrivateAuth>
+        ),
       },
       {
         path: "coffeeDisplay",
-        element: <CoffeeShow />,
+        element: (
+          <PrivateAuth>
+            <CoffeeShow />
+          </PrivateAuth>
+        ),
         loader: ({ params }) => fetch(`http://localhost:3000/${params._id}`),
       },
       {
         path: "coffee/:id",
-        element: <CoffeeShow />,
+        element: (
+          <PrivateAuth>
+            <UpdateCoffee />
+          </PrivateAuth>
+        ),
         loader: ({ params }) =>
           fetch(`http://localhost:3000/coffee/${params.id}`),
       },
       {
         path: "update/:id",
-        element: <UpdateCoffee />,
+        element: (
+          <PrivateAuth>
+            <UpdateCoffee />
+          </PrivateAuth>
+        ),
         loader: ({ params }) =>
           fetch(`http://localhost:3000/coffee/${params.id}`),
       },
@@ -60,6 +83,11 @@ const router = createBrowserRouter([
       {
         path: "/signIn",
         element: <SignIn />,
+      },
+      {
+        path: "/users",
+        Component: Users,
+        loader: () => fetch("http://localhost:3000/users"),
       },
     ],
   },

@@ -1,15 +1,16 @@
 import React, { use, useState } from 'react';
-import { Link } from 'react-router';
-
-import sidePic from '../assets/images/more/2.png'
-import { AuthContext } from '../ContextAPI/AuthContext';
-
-import { ToastContainer, toast } from 'react-toastify';
+import { Link, useLocation, useNavigate } from "react-router";
+import sidePic from "../assets/images/more/2.png";
+import { AuthContext } from "../ContextAPI/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { LuEyeOff } from "react-icons/lu";
 
 const SignIn = () => {
-  const { SignInUser, googleSignIn } = use(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location);
+  const { SignInUser, googleSignIn, forgotPassword } = use(AuthContext);
   const [showpassword, setShowPassword] = useState(false);
   const signInUserHandle = (event) => {
     event.preventDefault();
@@ -25,12 +26,29 @@ const SignIn = () => {
       .then((result) => {
         console.log(result.user);
         const user = result.user;
+        const updatedUser = {
+          email,
+          lastSignInTime: user.metadata.lastSignInTime,
+        };
+        fetch("http://localhost:3000/users", {
+          method: "PATCH",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(updatedUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("After modified: ", data);
+          });
+
         if (!user.emailVerified) {
           toast.error("Please verify your email address before signing in.");
           return;
         }
         toast.success("User Sign In Successfully!!!");
         event.target.reset();
+        navigate(location?.state || "/");
       })
       .catch((error) => {
         toast.error("Email and Password is Invalid", error);
@@ -46,7 +64,20 @@ const SignIn = () => {
         toast.error("Something went wrong!!!", error);
       });
   };
-
+  const userforgotPassword = () => {
+    const email = prompt("Please enter your email address:");
+    if (email) {
+      forgotPassword(email)
+        .then(() => {
+          toast.success("Password reset email sent successfully!");
+        })
+        .catch((error) => {
+          toast.error("Failed to send password reset email", error);
+        });
+    } else {
+      toast.error("Email is required to reset password");
+    }
+  };
   return (
     <div className="lg:min-h-screen mt-10 flex lg:items-center justify-center  text-balck p-4 lg:mt-10 lg:mx-0 md:mx-20">
       <div className="w-full max-w-5xl bg-[#edebe4] rounded-3xl overflow-hidden shadow-lg flex flex-col lg:flex-row ">
@@ -98,15 +129,24 @@ const SignIn = () => {
                 )}
               </button>
             </div>
-
-            <label className="inline-flex items-center mt-2">
-              <input
-                type="checkbox"
-                name="remember"
-                className="form-checkbox text-purple-500"
-              />
-              <span className="ml-2 text-sm text-black">Remember Me</span>
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  name="remember"
+                  className="form-checkbox text-purple-500"
+                />
+                <span className="ml-2 text-sm text-black">Remember Me</span>
+              </label>
+              <div className="flex justify-end">
+                <Link
+                  onClick={userforgotPassword}
+                  className="text-blue-500 hover:underline text-sm"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+            </div>
 
             <input
               type="submit"
